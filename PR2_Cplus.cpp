@@ -27,7 +27,7 @@ class seedbed // базовый класс "грядка"
             ripeness = r; // устанавливаем спелость (0/1)
             variety = v; // устанавливаем сорт
             on_seedbed = 1; // говорим, что оно есть на грядке
-            parts = 1; // продукт целый, поэтому часть одна
+            parts = 0; // продукт на грядке, поэтому у нас в "холодильнике его нет"
         }
 
         ~seedbed(){} // деструктор
@@ -56,7 +56,10 @@ class seedbed // базовый класс "грядка"
             {
                 parts--;
                 if(!parts) // если частей 0
+                {
                     cout << "Доели";
+                    return 1;
+                }
                 else 
                     cout << "Съели кусочек";
                 return 0;
@@ -65,7 +68,7 @@ class seedbed // базовый класс "грядка"
             if(!parts && !on_seedbed) // если нет ни на грядке ни в "холодильнике"
             {
                 cout << "Кушать нечего";
-                return 0
+                return 1;
             }
         }
 
@@ -87,6 +90,11 @@ class seedbed // базовый класс "грядка"
         }
 
         virtual void get_class_name() = 0; /* метод вывода имени класса */
+
+        bool get_on_seedbed() // геттер флага "на грядке?"
+        {
+            return on_seedbed;
+        }
         
 };
 
@@ -101,7 +109,7 @@ class watermelon: public seedbed // класс "арбуз"
             gender = 0;
         }
 
-        watermelon(double w, char r, string v, int a, char g): seedbed(w,r,v) // конструктор с параметрами
+        watermelon(double w, char r, string v, char g): seedbed(w,r,v) // конструктор с параметрами
         {
             gender = g;
         }
@@ -126,10 +134,8 @@ class watermelon: public seedbed // класс "арбуз"
 
         void eat_watermelon() /* съесть кусочек арбуза */
         {
-            if(eat())
-            {
+            if(eat()) // если доели продукт
                 this->~watermelon();
-            }
         }
         
         void set_gender() // сеттер пола арбуза
@@ -146,18 +152,90 @@ class watermelon: public seedbed // класс "арбуз"
                 gender = 1;
             else
                 gender = 0;
-
         }
 };
-
 
 class melon: public seedbed
 {
     public:
-        melon(): seedbed(); // 
+        ~melon(){} // деструктор
+
+        melon(): seedbed(){} // конструктор без параметров
+
+        melon(double w, char r, string v):seedbed(w,r,v){} // конструктор с параметрами
+        
+        void inf()
+        {
+            get_class_name();
+            info();
+        }
+
+        void knock() // метод "постучать"
+        {
+            cout << "- Knock knock" << endl << "- Who is there?" << endl;
+        }
+
+        void get_class_name() override // метод вывода названия класса
+        {
+            cout << "Дыня" << endl;
+        }
+
+        void eat_melon() // метод "съесть дыню"
+        {
+            if(eat()) // если доели продукт
+                this->~melon();
+        }
+
 };
 
+class potato: public seedbed
+{
+    private:
+        bool cooked;
+    public:
+        potato(): seedbed() // конструктор без параметров
+        {
+            cooked = 0;
+        } 
 
+        potato(double w, bool r, string v): seedbed(w, r, v) // констуктор с парматрами
+        {
+            cooked = 0;
+        } 
+
+        ~potato(){} // деструктор
+
+        void get_class_name() override // метод вывода названия класса
+        {
+            cout << "Картошка" << endl;
+        }
+
+        void inf() // метод вывода всех данных о продукте
+        {
+            this->get_class_name();
+            this->info();
+            if(cooked)
+                cout << "Приготовленная" << endl;
+            else
+                cout << "Сырая" << endl;
+        }   
+
+        void earth_up() // метод "окучить"
+        {
+            if(get_on_seedbed())
+                cout << "Окучили" << endl;
+            else
+                cout << "Нечего окучивать" << endl;
+        }
+
+        void eat_potato() // метод "съесть картошку"
+        {
+            // переписать функцию поедания (сделать virtual)
+            if(eat()) // если доели продукт
+                this->~potato();
+        }
+
+};
 
 int main(void)
 {
