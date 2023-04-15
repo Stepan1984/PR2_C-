@@ -95,7 +95,11 @@ class seedbed // базовый класс "грядка"
         {
             return on_seedbed;
         }
-        
+
+        void set_parts(int k) // сеттер количества частей 
+        {
+            parts = k;
+        }     
 };
 
 class watermelon: public seedbed // класс "арбуз"
@@ -190,18 +194,10 @@ class melon: public seedbed
 
 class potato: public seedbed
 {
-    private:
-        bool cooked;
     public:
-        potato(): seedbed() // конструктор без параметров
-        {
-            cooked = 0;
-        } 
+        potato(): seedbed(){} // конструктор без параметров 
 
-        potato(double w, bool r, string v): seedbed(w, r, v) // констуктор с парматрами
-        {
-            cooked = 0;
-        } 
+        potato(double w, bool r, string v): seedbed(w, r, v){} // констуктор с парматрами 
 
         ~potato(){} // деструктор
 
@@ -212,12 +208,8 @@ class potato: public seedbed
 
         void inf() // метод вывода всех данных о продукте
         {
-            this->get_class_name();
-            this->info();
-            if(cooked)
-                cout << "Приготовленная" << endl;
-            else
-                cout << "Сырая" << endl;
+            get_class_name();
+            info();
         }   
 
         void earth_up() // метод "окучить"
@@ -230,15 +222,54 @@ class potato: public seedbed
 
         void eat_potato() // метод "съесть картошку"
         {
-            // переписать функцию поедания (сделать virtual)
             if(eat()) // если доели продукт
                 this->~potato();
         }
 
 };
 
+class grapes: public seedbed
+{   
+    public:
+        grapes():seedbed(){} // конструктор без параметров
+
+        grapes(double w, bool r, string v): seedbed(w, r, v){} // конструктор с параметрами
+
+        ~grapes(){} // деструктор
+
+        void get_class_name() override 
+        {
+            cout << "Виноград" << endl;
+        }
+
+        void inf() // вывод информации об объекте
+        {
+            get_class_name();
+            info();
+        }
+
+        void eat_grapes()
+        {  
+            if(eat())
+                this->~grapes();
+        }
+
+        void dry() // метод "высушить"
+        {
+            cout << "Теперь это изюм" << endl;
+        }
+};
+ 
+
 int main(void)
 {
     setlocale(LC_ALL, "Rus");
+
+    potato p;
+    grapes g;
+    melon m;
+    watermelon w;
+
+    return 0;
 }
 
