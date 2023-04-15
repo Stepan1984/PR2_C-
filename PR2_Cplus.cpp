@@ -32,7 +32,7 @@ class seedbed // базовый класс "грядка"
 
         ~seedbed(){} // деструктор
 
-        void info() /* метод вывода информации об объекте */
+        virtual void class_info() /* метод вывода информации об объекте */
         {
             cout << "Вес: " << weight << endl << "Спелый: " << (ripeness? "да" : "нет" ) << endl << "Сорт: " << variety << endl;
             if(parts == 1)
@@ -43,13 +43,13 @@ class seedbed // базовый класс "грядка"
                 5-20 */  
         }
 
-        bool eat() // метод "съесть"
+        virtual void eat() // метод "съесть"
         {
             if(!parts && on_seedbed) // если есть только на грядке
             {
                 cout << "Вы отравились" << endl;
                 on_seedbed = 0;
-                return 1; // 1 - съели и отравились
+                return;
             }
 
             if(parts > 0) // если есть не на грядке
@@ -58,21 +58,21 @@ class seedbed // базовый класс "грядка"
                 if(!parts) // если частей 0
                 {
                     cout << "Доели";
-                    return 1;
+                    return;
                 }
                 else 
                     cout << "Съели кусочек";
-                return 0;
+                return;
             }
             
             if(!parts && !on_seedbed) // если нет ни на грядке ни в "холодильнике"
             {
                 cout << "Кушать нечего";
-                return 1;
+                return;
             }
         }
 
-        void cut() // метод "разрезать"
+        virtual void cut() // метод "разрезать"
         {
             if(!parts)
                 cout << "Резать нечего";
@@ -83,13 +83,13 @@ class seedbed // базовый класс "грядка"
             }
         }
 
-        void pick() // метод "собрать с грядки" 
+        virtual void pick() // метод "собрать с грядки" 
         {
             on_seedbed = 0;
             parts = 1;
         }
 
-        virtual void get_class_name() = 0; /* метод вывода имени класса */
+        virtual string get_class_name() = 0; /* метод вывода имени класса */
 
         bool get_on_seedbed() // геттер флага "на грядке?"
         {
@@ -118,44 +118,32 @@ class watermelon: public seedbed // класс "арбуз"
             gender = g;
         }
 
-        void get_class_name() override /* вывод имени класса */
+        string get_class_name() override /* вывод имени класса */
         {
-            cout << "Арбуз" << endl;
+            return "Арбуз";
         }
 
         ~watermelon(){} // деструктор
 
         void knock() /* метод "постучать" */
         {
-            cout << "Бум" << endl;
+            cout << "Knock" << endl;
         } 
 
-        void inf() /*матод вывода информации об объекте*/ 
+        void class_info() override /*матод вывода информации об объекте*/ 
         {
-            get_class_name();
-            info();
+            cout << get_class_name() << endl;
+            seedbed::class_info();
         }
 
-        void eat_watermelon() /* съесть кусочек арбуза */
+        void eat() override  /* съесть кусочек арбуза */
         {
-            if(eat()) // если доели продукт
-                this->~watermelon();
+            seedbed::eat();
         }
         
-        void set_gender() // сеттер пола арбуза
+        void set_gender(char i) // сеттер пола арбуза
         {
-            char ans;
-            cout << "Выберите пол растения: м/ж";
-            do
-            {
-                cin >> ans;
-                cin.get();
-            }while(ans != 'Ж' && ans != 'ж' && ans != 'М' && ans != 'м');
-
-            if(ans == 'ж' || ans == 'Ж' )
-                gender = 1;
-            else
-                gender = 0;
+            gender = i;
         }
 };
 
@@ -168,10 +156,10 @@ class melon: public seedbed
 
         melon(double w, char r, string v):seedbed(w,r,v){} // конструктор с параметрами
         
-        void inf()
+        void class_info() override
         {
-            get_class_name();
-            info();
+            cout << get_class_name() << endl;
+            seedbed::class_info();
         }
 
         void knock() // метод "постучать"
