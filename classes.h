@@ -4,6 +4,7 @@
 
 using namespace std;
 
+
 class seedbed // базовый класс "грядка"
 {
     private:
@@ -12,7 +13,7 @@ class seedbed // базовый класс "грядка"
         string variety; // сорт
         int parts; // количество частей
         bool on_seedbed; // flag на грядке?
-    
+        
     public:
         seedbed() // конструктор без параметров
         {

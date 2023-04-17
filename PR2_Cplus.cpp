@@ -1,7 +1,9 @@
 #include "classes.h"
 #include <iostream>
 #include <stdio.h>
-#include <locale.h>
+#include <windows.h>
+#include <cstdlib>  
+
 #define SIZE 4
 
 using namespace std;
@@ -15,7 +17,9 @@ void choose(seedbed ** );
 
 int main(void)
 {
-    setlocale(LC_ALL, "Rus");
+    system("chcp 1251");
+    /* SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);  */ 
 
     seedbed ** array = new seedbed * [SIZE]; // создаём массив из 4 элементов базового класса
     for(int i = 0; i < SIZE; i++) 
@@ -49,25 +53,24 @@ int main(void)
                 break;
         }
     }while(menu != 5);
+
+    for(int i = 0; i < SIZE; i++)
+        delete array[i];
+    delete[] array;
+
     return 0;
 }
 
 void add_menu(seedbed ** array) // функция добавления продукта
 {   
-    bool flag = false;
     int i;
     for(i = 0; i < SIZE; i++) // проверяем грядку на свободные места
     {
-        if(array[i] == NULL)
+        if(array[i] == NULL) // если нашли свободное место
             break;
-        else
-        {
-            flag = true;
-            break;
-        }
     }
 
-    if(flag) // если мест на грядке нет
+    if(i == SIZE) // если мест на грядке нет
     {
         cout << "Грядка заполнена" << endl << "ENTER - для продолжения" << endl;
         while(cin.get() != '\n');
@@ -105,7 +108,7 @@ seedbed * init_obj(int type) // функция инициализации объекта
     bool ripeness; // спелость
     string variety; // сорт
     bool gender;
-    string yes;
+    string yes, dump;
 
     do
     {
@@ -114,19 +117,19 @@ seedbed * init_obj(int type) // функция инициализации объекта
         cin >> weight;
     }while(weight < 0);
 
-    cout << "Спелый? (д/н)" << endl;
+    cout << "Спелый? (y/n)" << endl;
     do
     {
         cin >> yes;
         cin.get();
-    }while(yes != "д" && yes != "Д" && yes != "Н" && yes != "н");
+    }while(yes != "y" && yes != "Y" && yes != "N" && yes != "n");
 
-    if(yes == "Д" || yes == "д")
+    if(yes == "Y" || yes == "y")
         ripeness = true;
     else
         ripeness = false;
 
-    system("cls");
+    //system("cls");
     cout << "Сорт: ";
     cin >> variety;
     cin.get();
@@ -134,13 +137,13 @@ seedbed * init_obj(int type) // функция инициализации объекта
     switch(type)
     {
         case 1:
-            cout << "Пол арбуза (м/ж)";
+            cout << "Пол арбуза (m/f)";
             do
             {
                 cin >> yes;
                 cin.get();
-            }while(yes != "м" && yes != "М" && yes != "ж" && yes != "Ж");
-            if(yes == "М" || yes == "м")
+            }while(yes != "m" && yes != "M" && yes != "f" && yes != "F");
+            if(yes == "M" || yes == "m")
                 gender = false;
             else
                 gender = true;
@@ -157,6 +160,7 @@ seedbed * init_obj(int type) // функция инициализации объекта
 
 void do_for_all_menu(seedbed ** array) // меню выбора метода базового класса
 {
+    system("cls");
     if(array[0] == NULL)
     {
         cout << "Массив пуст" << endl;
@@ -166,6 +170,7 @@ void do_for_all_menu(seedbed ** array) // меню выбора метода базового класса
     int menu, i;
     do
     {
+        system("cls");
         cout << "Выберите действия над объектами" << endl;
         cout << "1. Съесть" << endl;
         cout << "2. Порезать" << endl;
@@ -177,7 +182,8 @@ void do_for_all_menu(seedbed ** array) // меню выбора метода базового класса
 
     if(menu == 4)
         return;
-    
+        
+    system("cls");
     do_for_all(array, menu);
     return;
 }
@@ -208,6 +214,7 @@ void do_for_all(seedbed ** array, int type ) // функция вызова методов базового 
 
 void show(seedbed ** array) // функция вывода данных обо всех объектах 
 {
+    system("cls");
     if(array[0] == NULL)
     {
         cout << "Пустая грядка" << endl << "ENTER - для продолжения";
@@ -230,7 +237,8 @@ void choose(seedbed ** array) // функция вызова уникальных методов объектов клас
     int menu, i;
 
     do
-    {
+    {   
+        system("cls");
         for(i = 0; i < SIZE; i++)
         {
             if(array[i] == NULL)
@@ -241,17 +249,16 @@ void choose(seedbed ** array) // функция вызова уникальных методов объектов клас
         cin >> menu;
         cin.get();
         menu--;
+        system("cls");
         if(menu == SIZE)
             break;
-        if(array[menu] == NULL)
-            continue;
         if(array[menu]->get_class_name() == "Арбуз")
             dynamic_cast< watermelon *>(array[menu])->knock();
         else if(array[menu]->get_class_name() == "Дыня")
             dynamic_cast<melon*>(array[menu])->knock();
         else if(array[menu]->get_class_name() == "Картошка")
             dynamic_cast<potato*>(array[menu])->earth_up();
-        else if(array[menu]->get_class_name() == "Виноград")
+        else if(array[menu]->get_class_name() == "Виноград" || array[menu]->get_class_name() == "Изюм")
             dynamic_cast<grapes*>(array[menu])->dry();
         cout << "ENTER - для продолжения" << endl;
         while(cin.get() != '\n');
