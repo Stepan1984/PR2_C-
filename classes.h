@@ -5,142 +5,181 @@
 using namespace std;
 
 
-class seedbed // Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ "РіСЂСЏРґРєР°"
+class seedbed // базовый класс "грядка"
 {
     private:
-        double weight; // РІРµСЃ
-        bool ripeness; // СЃРїРµР»РѕСЃС‚СЊ
-        string variety; // СЃРѕСЂС‚
-        int parts; // РєРѕР»РёС‡РµСЃС‚РІРѕ С‡Р°СЃС‚РµР№
-        bool on_seedbed; // flag РЅР° РіСЂСЏРґРєРµ?
+        double weight; // вес
+        bool ripeness; // спелость
+        string variety; // сорт
+        int parts; // количество частей
+        bool full; // целый 
+        bool on_seedbed; // flag на грядке?
         
     public:
-        seedbed() // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ
+        seedbed() // конструктор без параметров
         {
-            weight = ripeness = parts = on_seedbed = 0;
-            // variety - РѕР±СЉРµРєС‚ РєР»Р°СЃСЃР° string, РѕРЅ РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚СЃСЏ РµРіРѕ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј
+            weight = ripeness = parts = on_seedbed = full = 0;
+            // variety - объект класса string, он инициализируется его конструктором
         }
 
-        seedbed(double w, bool r, string v) // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РїР°СЂР°РјРµС‚СЂР°РјРё
+        seedbed(double w, bool r, string v) // конструктор с параметрами
         {
-            weight = w; // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РІРµСЃ
-            ripeness = r; // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЃРїРµР»РѕСЃС‚СЊ (0/1)
-            variety = v; // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЃРѕСЂС‚
-            on_seedbed = 1; // РіРѕРІРѕСЂРёРј, С‡С‚Рѕ РѕРЅРѕ РµСЃС‚СЊ РЅР° РіСЂСЏРґРєРµ
-            parts = 0; // РїСЂРѕРґСѓРєС‚ РЅР° РіСЂСЏРґРєРµ, РїРѕСЌС‚РѕРјСѓ Сѓ РЅР°СЃ РІ "С…РѕР»РѕРґРёР»СЊРЅРёРєРµ РµРіРѕ РЅРµС‚"
+            weight = w; // устанавливаем вес
+            ripeness = r; // устанавливаем спелость (0/1)
+            variety = v; // устанавливаем сорт
+            on_seedbed = true; // говорим, что оно есть на грядке
+            parts = 0; // продукт на грядке, поэтому у нас в "холодильнике его нет"
+            full = true; // целый 
         }
 
-        ~seedbed(){} // РґРµСЃС‚СЂСѓРєС‚РѕСЂ
+        ~seedbed(){} // деструктор
 
-        virtual void class_info() /* РјРµС‚РѕРґ РІС‹РІРѕРґР° РёРЅС„РѕСЂРјР°С†РёРё РѕР± РѕР±СЉРµРєС‚Рµ */
+        virtual void class_info() /* метод вывода информации об объекте */
         {
-            cout << "Р’РµСЃ: " << weight << endl << "РЎРїРµР»С‹Р№: " << (ripeness? "РґР°" : "РЅРµС‚" ) << endl << "РЎРѕСЂС‚: " << variety << endl;
-            if(parts == 1)
-                cout << "РџСЂРѕРґСѓРєС‚ С†РµР»С‹Р№" << endl;
+            cout << "Вес: " << weight << endl << "Спелый: " << (ripeness? "да" : "нет" ) << endl << "Сорт: " << variety << endl;
+            if(on_seedbed == 1)
+                cout << "Продукт на грядке" << endl;
+            else if(!parts && !full)
+                cout << "Всё съели" << endl;
+            else if(parts == 1 && full)
+                cout << "Продукт целый" << endl;
             else
-                cout << "РџСЂРѕРґСѓРєС‚ СЂР°Р·СЂРµР·Р°РЅ РЅР° " << parts << "С‡Р°СЃС‚СЊ/С‡Р°СЃС‚РµР№/С‡Р°СЃС‚Рё" << endl; 
-                /*2,3,4
-                5-20 */  
+                cout << "Продукт разрезан на " << parts << " частей" << endl;
+            cout << endl;   
         }
 
-        virtual void eat() // РјРµС‚РѕРґ "СЃСЉРµСЃС‚СЊ"
+        virtual void eat() // метод "съесть"
         {
-            if(!parts && on_seedbed) // РµСЃР»Рё РµСЃС‚СЊ С‚РѕР»СЊРєРѕ РЅР° РіСЂСЏРґРєРµ
+            if(!parts && on_seedbed) // если есть только на грядке
             {
-                cout << "Р’С‹ РѕС‚СЂР°РІРёР»РёСЃСЊ" << endl;
-                on_seedbed = 0;
+                cout << "Вы отравились" << endl;
+                on_seedbed = full = 0;
                 return;
             }
 
-            if(parts > 0) // РµСЃР»Рё РµСЃС‚СЊ РЅРµ РЅР° РіСЂСЏРґРєРµ
+            if(parts > 0) // если есть не на грядке
             {
                 parts--;
-                if(!parts) // РµСЃР»Рё С‡Р°СЃС‚РµР№ 0
+                if(!parts) // если частей 0
                 {
-                    cout << "Р”РѕРµР»Рё";
+                    cout << "Доели" << endl;
                     return;
                 }
                 else 
-                    cout << "РЎСЉРµР»Рё РєСѓСЃРѕС‡РµРє";
+                    cout << "Съели кусочек" << endl;
                 return;
             }
             
-            if(!parts && !on_seedbed) // РµСЃР»Рё РЅРµС‚ РЅРё РЅР° РіСЂСЏРґРєРµ РЅРё РІ "С…РѕР»РѕРґРёР»СЊРЅРёРєРµ"
+            if(!parts && !on_seedbed) // если нет ни на грядке ни в "холодильнике"
             {
-                cout << "РљСѓС€Р°С‚СЊ РЅРµС‡РµРіРѕ";
+                cout << "Кушать нечего";
                 return;
             }
         }
 
-        virtual void cut() // РјРµС‚РѕРґ "СЂР°Р·СЂРµР·Р°С‚СЊ"
+        virtual void cut() // метод "разрезать"
         {
-            if(!parts)
-                cout << "Р РµР·Р°С‚СЊ РЅРµС‡РµРіРѕ";
+            if(!parts && on_seedbed)
+            {
+                cout << "Резать нечего, соберите с грядки" << endl;;
+                return;
+            }
+            if(!parts && !full)
+            {
+                cout << "Уже всё скушали" << endl;
+            }
             else
             {
+                full = false;
                 parts++;
-                cout << "РљСѓСЃРѕС‡РєРѕРІ СЃС‚Р°Р»Рѕ РЅР° 1 Р±РѕР»СЊС€Рµ";
+                cout << "Кусочков стало на 1 больше" << endl;
             }
         }
 
-        virtual void pick() // РјРµС‚РѕРґ "СЃРѕР±СЂР°С‚СЊ СЃ РіСЂСЏРґРєРё" 
+        virtual void pick() // метод "собрать с грядки" 
         {
+            if(on_seedbed == 0)
+            {
+                cout << "На грядке ничего нет" << endl;
+                return;
+            }
+
             on_seedbed = 0;
             parts = 1;
         }
 
-        virtual string get_class_name() = 0; /* РјРµС‚РѕРґ РІС‹РІРѕРґР° РёРјРµРЅРё РєР»Р°СЃСЃР° */
+        virtual string get_class_name() = 0; /* метод вывода имени класса */
 
-        bool get_on_seedbed() // РіРµС‚С‚РµСЂ С„Р»Р°РіР° "РЅР° РіСЂСЏРґРєРµ?"
+        bool get_on_seedbed() // геттер флага "на грядке?"
         {
             return on_seedbed;
         }
 
-        void add_parts(int k) // СЃРµС‚С‚РµСЂ РєРѕР»РёС‡РµСЃС‚РІР° С‡Р°СЃС‚РµР№ 
+        bool get_full()
+        {
+            return full;
+        }
+
+        void add_parts(int k) // сеттер количества частей 
         {
             parts += k;
+        }
+
+        void set_full(bool b)
+        {
+            full = b;
         }     
 };
 
-class watermelon: public seedbed // РєР»Р°СЃСЃ "Р°СЂР±СѓР·"
+class watermelon: public seedbed // класс "арбуз"
 {
     private:
-        bool gender; // РїРѕР» Р°СЂР±СѓР·Р° (0 - male, 1 - female)
+        bool gender; // пол арбуза (0 - male, 1 - female)
     public:
 
-        ~watermelon(){} // РґРµСЃС‚СЂСѓРєС‚РѕСЂ
+        ~watermelon(){} // деструктор
 
-        watermelon(): seedbed() {gender = 0;} // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ
+        watermelon(): seedbed() {gender = 0;} // конструктор без параметров
         
-        watermelon(double w, char r, string v, char g): seedbed(w,r,v) {gender = g;} // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РїР°СЂР°РјРµС‚СЂР°РјРё
+        watermelon(double w, char r, string v, char g): seedbed(w,r,v) {gender = g;} // конструктор с параметрами
         
-        string get_class_name() override /* РІС‹РІРѕРґ РёРјРµРЅРё РєР»Р°СЃСЃР° */
+        string get_class_name() override /* вывод имени класса */
         {
-            return "РђСЂР±СѓР·";
+            return "Арбуз";
         }
 
-        void knock() /* РјРµС‚РѕРґ "РїРѕСЃС‚СѓС‡Р°С‚СЊ" */
+        void knock() /* метод "постучать" */
         {
-            cout << "Knock" << endl;
+            if(seedbed::get_full())
+                cout << "Knock" << endl;
+            else
+                cout << "Не во что стучать" << endl;
         } 
 
-        void class_info() override /*РјР°С‚РѕРґ РІС‹РІРѕРґР° РёРЅС„РѕСЂРјР°С†РёРё РѕР± РѕР±СЉРµРєС‚Рµ*/ 
+        void class_info() override /*матод вывода информации об объекте*/ 
         {
             cout << get_class_name() << endl;
+            if(gender)
+                cout << "Арбуз-девочка" << endl;
+            else
+                cout << "Арбуз-мальчик" << endl;
             seedbed::class_info();
+            
+
+            
         }
 
-        void eat() override  /* СЃСЉРµСЃС‚СЊ РєСѓСЃРѕС‡РµРє Р°СЂР±СѓР·Р° */
+        void eat() override  /* съесть кусочек арбуза */
         {
             seedbed::eat();
         }
         
-        void pick() override // РјРµС‚РѕРґ "СЃРѕР±СЂР°С‚СЊ СЃ РіСЂСЏРґРєРё"
+        void pick() override // метод "собрать с грядки"
         {
             seedbed::pick();
         }
 
-        void cut() override // РјРµС‚РѕРґ "СЂР°Р·СЂРµР·Р°С‚СЊ"
+        void cut() override // метод "разрезать"
         {
             seedbed::cut();
         }
@@ -149,11 +188,11 @@ class watermelon: public seedbed // РєР»Р°СЃСЃ "Р°СЂР±СѓР·"
 class melon: public seedbed
 {
     public:
-        ~melon(){} // РґРµСЃС‚СЂСѓРєС‚РѕСЂ
+        ~melon(){} // деструктор
 
-        melon(): seedbed(){} // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ
+        melon(): seedbed(){} // конструктор без параметров
 
-        melon(double w, char r, string v):seedbed(w,r,v){} // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РїР°СЂР°РјРµС‚СЂР°РјРё
+        melon(double w, char r, string v):seedbed(w,r,v){} // конструктор с параметрами
         
         void class_info() override
         {
@@ -161,27 +200,30 @@ class melon: public seedbed
             seedbed::class_info();
         }
 
-        void knock() // РјРµС‚РѕРґ "РїРѕСЃС‚СѓС‡Р°С‚СЊ"
+        void knock() // метод "постучать"
         {
-            cout << "- Knock knock" << endl << "- Who is there?" << endl;
+            if(seedbed::get_full())
+                cout << "- Knock knock" << endl << "- Who is there?" << endl;
+            else
+                cout << "Не во что стучать" << endl;
         }
 
-        string get_class_name() override // РјРµС‚РѕРґ РІС‹РІРѕРґР° РЅР°Р·РІР°РЅРёСЏ РєР»Р°СЃСЃР°
+        string get_class_name() override // метод вывода названия класса
         {
-            return "Р”С‹РЅСЏ";
+            return "Дыня";
         }
 
-        void eat() override // РјРµС‚РѕРґ "СЃСЉРµСЃС‚СЊ"
+        void eat() override // метод "съесть"
         {
             seedbed::eat();
         }
 
-        void pick() override // РјРµС‚РѕРґ "СЃРѕР±СЂР°С‚СЊ СЃ РіСЂСЏРґРєРё"
+        void pick() override // метод "собрать с грядки"
         {
             seedbed::pick();
         }
 
-        void cut() override // РјРµС‚РѕРґ СЂР°Р·СЂРµР·Р°С‚СЊ
+        void cut() override // метод разрезать
         {
             seedbed::cut();
         }
@@ -190,52 +232,52 @@ class melon: public seedbed
 class potato: public seedbed
 {   
     private:
-        bool earthed_up; // РїРѕР»Рµ "РѕРєСѓС‡РµРЅРѕ"
+        bool earthed_up; // поле "окучено"
     public:
-        potato(): seedbed(){earthed_up = false;} // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ 
+        potato(): seedbed(){earthed_up = false;} // конструктор без параметров 
 
-        potato(double w, bool r, string v): seedbed(w, r, v){earthed_up = false;} // РєРѕРЅСЃС‚СѓРєС‚РѕСЂ СЃ РїР°СЂРјР°С‚СЂР°РјРё 
+        potato(double w, bool r, string v): seedbed(w, r, v){earthed_up = false;} // констуктор с парматрами 
 
-        ~potato(){} // РґРµСЃС‚СЂСѓРєС‚РѕСЂ
+        ~potato(){} // деструктор
 
-        string get_class_name() override // РјРµС‚РѕРґ РІС‹РІРѕРґР° РЅР°Р·РІР°РЅРёСЏ РєР»Р°СЃСЃР°
+        string get_class_name() override // метод вывода названия класса
         {
-            return "РљР°СЂС‚РѕС€РєР°";
+            return "Картошка";
         }
 
-        void class_info() override // РјРµС‚РѕРґ РІС‹РІРѕРґР° РІСЃРµС… РґР°РЅРЅС‹С… Рѕ РїСЂРѕРґСѓРєС‚Рµ
+        void class_info() override // метод вывода всех данных о продукте
         {
             cout << get_class_name() << endl;
             seedbed::class_info();
         }   
 
-        void earth_up() // РјРµС‚РѕРґ "РѕРєСѓС‡РёС‚СЊ"
+        void earth_up() // метод "окучить"
         {
             if(get_on_seedbed()) 
             {
                 if(!earthed_up)
                 {
-                    cout << "РћРєСѓС‡РёР»Рё" << endl;
+                    cout << "Окучили" << endl;
                     earthed_up = true;
                 }
                 else
-                    cout << "РЈР¶Рµ РѕРєСѓС‡РµРЅРѕ" << endl;
+                    cout << "Уже окучено" << endl;
             }
             else
-                cout << "РќРµС‡РµРіРѕ РѕРєСѓС‡РёРІР°С‚СЊ" << endl;
+                cout << "Нечего окучивать" << endl;
         }
 
-        void eat() override // РјРµС‚РѕРґ "СЃСЉРµСЃС‚СЊ"
+        void eat() override // метод "съесть"
         {
             seedbed::eat();
         }
 
-        void pick() override // РјРµС‚РѕРґ "СЃРѕР±СЂР°С‚СЊ СЃ РіСЂСЏРґРєРё"
+        void pick() override // метод "собрать с грядки"
         {
             seedbed::pick();
         }
 
-        void cut() override // РјРµС‚РѕРґ "СЂР°Р·СЂРµР·Р°С‚СЊ"
+        void cut() override // метод "разрезать"
         {
             seedbed::cut();
         }
@@ -245,58 +287,59 @@ class grapes: public seedbed
 {   private:
         bool is_dried;
     public:
-        grapes():seedbed() // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ
+        grapes():seedbed() // конструктор без параметров
         {
             is_dried = false;
         }
 
-        grapes(double w, bool r, string v): seedbed(w, r, v) // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РїР°СЂР°РјРµС‚СЂР°РјРё
+        grapes(double w, bool r, string v): seedbed(w, r, v) // конструктор с параметрами
         {
             is_dried = false;
         }
 
-        ~grapes(){} // РґРµСЃС‚СЂСѓРєС‚РѕСЂ
+        ~grapes(){} // деструктор
 
-        string get_class_name() override // РјРµС‚РѕРґ РїРѕР»СѓС‡РµРЅРёСЏ РЅР°Р·РІР°РЅРёСЏ РєР»Р°СЃСЃР°
+        string get_class_name() override // метод получения названия класса
         {
             if(!is_dried)
-                return "Р’РёРЅРѕРіСЂР°Рґ";
+                return "Виноград";
             else
-                return "РР·СЋРј";
+                return "Изюм";
         }
 
-        void class_info() override // РІС‹РІРѕРґ РёРЅС„РѕСЂРјР°С†РёРё РѕР± РѕР±СЉРµРєС‚Рµ
+        void class_info() override // вывод информации об объекте
         {
             cout << get_class_name() << endl;
             seedbed::class_info();
         }
 
-        void eat() override // РјРµС‚РѕРґ СЃСЉРµСЃС‚СЊ
+        void eat() override // метод съесть
         {  
             seedbed::eat();
         }
 
-        void dry() // РјРµС‚РѕРґ "РІС‹СЃСѓС€РёС‚СЊ"
+        void dry() // метод "высушить"
         {   
-            if(is_dried) // РµСЃР»Рё СѓР¶Рµ РІС‹СЃСѓС€РµРЅ
-                cout << "РЎСѓС€РёС‚СЊ РёР·СЋРј?" << endl;
+            if(is_dried) // если уже высушен
+                cout << "Сушить изюм?" << endl;
             else
             {
-                cout << "РўРµРїРµСЂСЊ СЌС‚Рѕ РёР·СЋРј" << endl;
+                cout << "Теперь это изюм" << endl;
                 is_dried = true;
             }
         }
 
-        void cut() override // РјРµС‚РѕРґ "СЂР°Р·СЂРµР·Р°С‚СЊ"
+        void cut() override // метод "разрезать"
         {
-            cout << "РџРѕР¶Р°Р»СѓР№ РЅРµ СЃС‚РѕРёС‚" << endl;
+            cout << "Пожалуй не стоит" << endl;
         }
 
-        void pick() override // РјРµС‚РѕРґ "СЃРѕР±СЂР°С‚СЊ"
+        void pick() override // метод "собрать"
         {
             seedbed::pick();
             seedbed::add_parts(14);
-            cout << "РЎРѕСЂРІР°Р»Рё РіСЂРѕР·РґСЊ СЃ 15 РІРёРЅРѕРіСЂР°РґРёРЅР°РјРё" << endl;
+            cout << "Сорвали гроздь с 15 виноградинами" << endl;
+            seedbed::set_full(false);
         }
 };
  
