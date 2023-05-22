@@ -141,7 +141,7 @@ class watermelon: public seedbed // класс "арбуз"
 
         watermelon(): seedbed() {gender = 0;} // конструктор без параметров
         
-        watermelon(double w, char r, string v, char g): seedbed(w,r,v) {gender = g;} // конструктор с параметрами
+        watermelon(double w, char r, string v, bool g): seedbed(w,r,v) {gender = g;} // конструктор с параметрами
         
         string get_class_name() override /* вывод имени класса */
         {

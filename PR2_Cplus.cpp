@@ -1,9 +1,9 @@
 #include "classes.h"
 #include <iostream>
-#include <stdio.h>
 #include <windows.h>
 #include <cstdlib>
-#include <locale.h>  
+#include <string>
+ 
 
 #define SIZE 4
 
@@ -200,9 +200,11 @@ void do_for_all(seedbed ** array, int type ) // функция вызова методов базового 
             case 1:
                 cout << array[i]->get_class_name() << ":" << endl; // выводим имя класса объекта
                 array[i]->eat(); // вызываем метод "съесть"
+                break;
             case 2:
                 cout << array[i]->get_class_name() << ":" << endl;
                 array[i]->cut(); // вызов метода "разрезать"
+                break;
             case 3:
                 cout << array[i]->get_class_name() << ":" << endl;
                 array[i]->pick();// вызов метода "собрать с грядки"
